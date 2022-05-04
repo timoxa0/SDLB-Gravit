@@ -14,3 +14,5 @@ db['host'] = 'localhost' # Хост mysql/mariadb
 db['login'] = 'Username' # Имя ползователя mariadb
 db['password'] = 'SuperSecretPassword' # Пароль от ползователя
 db['db_name'] = 'launcher' # База
+
+embedColor = 0x8c4bc9
