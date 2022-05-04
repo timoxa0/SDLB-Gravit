@@ -1,5 +1,7 @@
 CREATE USER 'launchserver'@'localhost' IDENTIFIED BY 'password';
 CREATE DATABASE db;
+GRANT ALL PRIVILEGES ON db . * TO 'launchserver'@'localhost';
+FLUSH PRIVILEGES;
 USE GRAVIT;
 
 CREATE TABLE `users` (
