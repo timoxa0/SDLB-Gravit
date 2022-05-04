@@ -20,8 +20,8 @@ rm /var/www/html/index.html # Удаляем стандартную заглуш
 cd /var/www/html/ # Переходим в папку сайта
 curl -O https://raw.githubusercontent.com/microwin7/GravitLauncher-TextureProvider/main/TextureProvider.php # Скачиваем скрипт
 bash -c "mkdir /var/www/html/{skins,cloaks}" # Содаём папки для скинов и плащей
-bash -c "chown -R authbot:www-data /var/www/html/{skins,cloaks} # Меняем владельца этих папок на ползователя authbot
-bash -c "chmod -R 640 /var/www/html/{skins,cloaks} # Передаём права на эти папки ползователю authbot
+bash -c "chown -R authbot:www-data /var/www/html/{skins,cloaks}" # Меняем владельца этих папок на ползователя authbot
+bash -c "chmod -R 640 /var/www/html/{skins,cloaks}" # Передаём права на эти папки ползователю authbot
 ```
 
 В файле `/var/www/html/TextureProvider.php` измените
