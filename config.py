@@ -11,8 +11,8 @@ launcher['LINUX/MAC'] = '' # А здесь на linux/macos версию
 
 db = dict()
 db['host'] = 'localhost' # Хост mysql/mariadb
-db['login'] = 'Username' # Имя ползователя mariadb
-db['password'] = 'SuperSecretPassword' # Пароль от ползователя
-db['db_name'] = 'launcher' # База
+db['login'] = 'authbot' # Имя ползователя mariadb
+db['password'] = 'password' # Пароль от ползователя
+db['db_name'] = 'db' # База
 
-embedColor = 0x8c4bc9
+embedColor = 0x8c4bc9 # Цвет плашки в дискорде
