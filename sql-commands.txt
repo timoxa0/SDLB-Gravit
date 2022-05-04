@@ -1,4 +1,5 @@
-CREATE DATABASE gravit;
+CREATE USER 'launchserver'@'localhost' IDENTIFIED BY 'password';
+CREATE DATABASE db;
 USE GRAVIT;
 
 CREATE TABLE `users` (
