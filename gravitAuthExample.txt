@@ -1,0 +1,29 @@
+"std": {
+  "core": {
+    "type": "mysql",
+    "mySQLHolder": {
+      "address": "localhost",
+      "port": 3306,
+      "username": "launchserver",
+      "password": "password",
+      "database": "db?serverTimezone=UTC",
+      "timezone": "UTC",
+      "useHikari": true
+    },
+    "passwordVerifier": {
+      "algo": "SHA256",
+      "type": "digest"
+    },
+    "expireSeconds": 3600,
+    "table": "users",
+    "tableHwid": "hwids",
+    "uuidColumn": "uuid",
+    "usernameColumn": "username",
+    "passwordColumn": "password",
+    "accessTokenColumn": "accessToken",
+    "hardwareIdColumn": "hwidId",
+    "serverIDColumn": "serverID"
+  },
+  "isDefault": true,
+  "displayName": "Default"
+}
