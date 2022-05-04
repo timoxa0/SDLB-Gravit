@@ -119,7 +119,7 @@ async def chcloak(message):
         db.close()
     
 async def links(message):
-    embedVar = discord.Embed(title="Ссылки на лаунчер", description="Скачай же меня", color=0x8c4bc9)
+    embedVar = discord.Embed(title="Ссылки на лаунчер", description="Скачай же меня", color=config.embedColor)
     embedVar.add_field(name="Windows",
                        value= launcher['MUSTDIE'],
                        inline=True)
@@ -129,7 +129,7 @@ async def links(message):
     await message.channel.send(embed=embedVar)
 
 async def help(message):
-    embedVar = discord.Embed(title="Справка", description="*Что же делать?*", color=0x8c4bc9)
+    embedVar = discord.Embed(title="Справка", description="*Что же делать?*", color=config.embedColor)
     embedVar.add_field(name="!register", value="Регистрация: !register ник пароль", inline=False)
     embedVar.add_field(name="!chnick", value="Смена пароля: !chnick новый никнейм", inline=False)
     embedVar.add_field(name="!chpass", value="Смена пароля: !chpass новый пароль", inline=False)
