@@ -2,8 +2,8 @@ DISCORD_TOKEN='' # Токен дс бота
 cPREFIX = '!' # Префикс команды бота
 
 scm = dict()
-scm['skinDir'] = '' # Путь к папке со скинами
-scm['cloakDir'] = '' # Путь к папке с плащами
+scm['skinDir'] = '/var/www/html/skins' # Путь к папке со скинами
+scm['cloakDir'] = '/var/www/html/cloaks' # Путь к папке с плащами
 
 launcher = dict()
 launcher['MUSTDIE'] = '' # Ваша ссылка на windows версию лаунчера
