@@ -53,6 +53,7 @@ bash -c "chmod -R 640 /var/www/html/{skins,cloaks}" # Передаём прав�
 su - authbot
 git clone https://github.com/timoxa0/discord-auth
 cd discord-auth
+pip install -r requirements.txt
 ```
 
 #### 6. В файле config.py впишите между кавычек:
