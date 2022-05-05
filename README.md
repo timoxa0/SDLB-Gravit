@@ -62,5 +62,11 @@ pip install -r requirements.txt
 - если вы меняли имя пользователя/пароль для доступа к бд, то измените их и в конфиге;
 - если скины и/или плащи лежат в другой папке, измените к ним путь.
 
+Можете запускать бота командой `screen -dmS auth /home/authbot/discord-auth/main.py`
+
 #### 7. Настройте LaunchServer
 Скопируйте [эту](https://raw.githubusercontent.com/timoxa0/discord-auth/main/gravitAuthExample.txt "эту") часть конфигурации в свой конфиг LauncherServer\`а с заменой. Т. е. удалите в своём конфиге весь блок std, заменив [этим](https://raw.githubusercontent.com/timoxa0/discord-auth/main/gravitAuthExample.txt "этим")
+
+[Подробнее](https://launcher.gravit.pro/auth/#%D0%BC%D0%B5%D1%82%D0%BE%D0%B4-mysql "Подробнее") про настройку LaunchServer
+
+#### 8. Готово!
