@@ -121,10 +121,10 @@ async def chcloak(message):
 async def links(message):
     embedVar = discord.Embed(title="Ссылки на лаунчер", description="Скачай же меня", color=config.embedColor)
     embedVar.add_field(name="Windows",
-                       value= launcher['MUSTDIE'],
+                       value=config.launcher['MUSTDIE'],
                        inline=True)
     embedVar.add_field(name="Linux/MacOS",
-                       value= launcher['LINUX/MAC'],
+                       value=config.launcher['LINUX/MAC'],
                        inline=True)
     await message.channel.send(embed=embedVar)
 
