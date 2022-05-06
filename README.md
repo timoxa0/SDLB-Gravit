@@ -13,6 +13,8 @@ useradd -m -G www-data authbot # Создаём пользователя authbot
 
 В файле `/etc/apache2/sites-enabled/000-default.conf` в строке `<VirtualHost *:80>` замените 80 на тот же порт.
 
+Перезагрузите Apache командой `systemctl restart apache2`
+
 Выполните следующие команды:
 
 ```
