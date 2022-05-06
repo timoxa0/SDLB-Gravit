@@ -1,7 +1,7 @@
 "std": {
   "textureProvider": {
         "type":"json",
-        "url":"http:/example.com:port/TextureProvider.php?login=%username%"
+        "url":"http//example.com:port/TextureProvider.php?login=%username%"
       },
   "core": {
     "type": "mysql",
