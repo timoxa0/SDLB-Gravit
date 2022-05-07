@@ -7,6 +7,9 @@ def sigint_handler(signal, frame):
 signal.signal(signal.SIGINT, sigint_handler)
 
 class templates():
+    def apacheDefault():
+        return '<VirtualHost *:80>\n    # ServerName whatsoever\n    ServerAdmin webmaster@localhost\n    DocumentRoot /var/www/html\n\n    ErrorLog ${APACHE_LOG_DIR}/default_error.log\n    CustomLog ${APACHE_LOG_DIR}/default_access.log combined\n\n    <Location />\n        <RequireAny>\n            # Example for \'Block all\':\n            # Require ip 0.0.0.0/32\n            Require all denied\n\n            # Example for \'White list\':\n            # Require ip 172.217.24.37/32\n        </RequireAny>\n    </Location>\n\n    SecRuleEngine On\n    SecRule RESPONSE_STATUS "403" "phase:4,id:1,drop"\n</VirtualHost>'
+    
     def apacheSite(port, scdir):
         return  f'<VirtualHost *:{port}>\n' \
                 '\t# Created by DLB for Gravit Install\n'\
@@ -90,7 +93,7 @@ def createTable(mysqlpassword, authbotUsername, authbotPassword, LaunchServerUse
             command = f'CREATE USER \'{LaunchServerUsername}\'@\'localhost\' IDENTIFIED BY \'{LaunchServerPassword}\';\nCREATE USER \'{authbotUsername}\'@\'localhost\' IDENTIFIED BY \'{authbotPassword}\';\nCREATE DATABASE db;\nGRANT ALL PRIVILEGES ON db . * TO \'{LaunchServerUsername}\'@\'localhost\';\nGRANT ALL PRIVILEGES ON db . * TO \'{authbotUsername}\'@\'localhost\';\nFLUSH PRIVILEGES;\n\nUSE db;\n\nCREATE TABLE `users` (\n  `id` varchar(255) NOT NULL,\n  `username` varchar(255) UNIQUE DEFAULT NULL,\n  `password` varchar(255) DEFAULT NULL,\n  `uuid` char(36) UNIQUE DEFAULT NULL,\n  `accessToken` char(32) DEFAULT NULL,\n  `serverID` varchar(41) DEFAULT NULL,\n  `hwidId` bigint DEFAULT NULL,\n  PRIMARY KEY (`id`)\n);\n\nCREATE TRIGGER setUUID BEFORE INSERT ON users\nFOR EACH ROW BEGIN\nIF NEW.uuid IS NULL THEN\nSET NEW.uuid = UUID();\nEND IF;\nEND;\n\nDELIMITER //\nCREATE TRIGGER setUUID BEFORE INSERT ON users\nFOR EACH ROW BEGIN\nIF NEW.uuid IS NULL THEN\nSET NEW.uuid = UUID();\nEND IF;\nEND; //\nDELIMITER ;\n\nUPDATE users SET uuid=(SELECT UUID()) WHERE uuid IS NULL;\n\nCREATE TABLE `hwids` (\n`id` bigint(20) NOT NULL,\n`publickey` blob,\n`hwDiskId` varchar(255) DEFAULT NULL,\n`baseboardSerialNumber` varchar(255) DEFAULT NULL,\n`graphicCard` varchar(255) DEFAULT NULL,\n`displayId` blob,\n`bitness` int(11) DEFAULT NULL,\n`totalMemory` bigint(20) DEFAULT NULL,\n`logicalProcessors` int(11) DEFAULT NULL,\n`physicalProcessors` int(11) DEFAULT NULL,\n`processorMaxFreq` bigint(11) DEFAULT NULL,\n`battery` tinyint(1) NOT NULL DEFAULT "0",\n`banned` tinyint(1) NOT NULL DEFAULT "0"\n) ENGINE=InnoDB DEFAULT CHARSET=utf8;\nALTER TABLE `hwids`\nADD PRIMARY KEY (`id`),\nADD UNIQUE KEY `publickey` (`publickey`(255));\nALTER TABLE `hwids`\nMODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT;\nALTER TABLE `users`\nADD CONSTRAINT `users_hwidfk` FOREIGN KEY (`hwidId`) REFERENCES `hwids` (`id`);\n'
             with open('/tmp/sql', 'w') as f:
                 f.write(command)
-            exec(f'mysql -uroot -p{mysqlpassword} -e "source /tmp/sql"')
+            exec(f'mysql -uroot -p{mysqlpassword} -e "source /tmp/sql" > /dev/null')
         else:
             return False
         return True
@@ -142,7 +145,7 @@ def createUser(authbotUsername, authbotPasswd):
     try:
         commands = [f'useradd -G www-data {authbotUsername} -s /bin/bash']
         if authbotPasswd != '':
-            commands.append(f'(echo {authbotPasswd}; echo {authbotPasswd}) | passwd {authbotUsername}')
+            commands.append(f'(echo {authbotPasswd}; echo {authbotPasswd}) | passwd {authbotUsername} > /dev/null')
         for cmd in commands:
             exec(cmd)
         return True
@@ -158,12 +161,14 @@ def createApache(scdir, apachePort):
             f.write(templates.apachePorts(apachePort))
         with open('/etc/apache2/sites-available/AuthBot.conf', 'w') as f:
             f.write(templates.apacheSite(apachePort, scdir))
-        
+        os.remove('/etc/apache2/sites-available/000-default.conf')
+        with open('/etc/apache2/sites-available/000-default.conf', 'w') as f:
+            f.write(templates.apacheDefault())
+                
         commands = [
-            f'bash -c "mkdir {scdir}/'+'{skins,cloaks}"',
-            'a2dissite 000-default',
-            'a2ensite AuthBot',
-            'systemctl reload apache2'
+            f'bash -c "mkdir {scdir}/'+'{skins,cloaks}"'
+            'a2ensite -q AuthBot',
+            'systemctl restart apache2'
         ]
         for cmd in commands:
             if exec(cmd):
@@ -179,7 +184,7 @@ def getBot(authbotUsername):
     try:
         commands = [
             f'git clone https://github.com/timoxa0/discord-auth /home/{authbotUsername}',
-            f'pip install -r /home/{authbotUsername}/requirements.txt'
+            f'pip install -r /home/{authbotUsername}/requirements.txt > /dev/null'
         ]
         for cmd in commands:
             exec(cmd)
@@ -193,7 +198,7 @@ def finaly(scdir, authbotUsername):
         commands = [
             f'bash -c "chown -R {authbotUsername}:www-data {scdir}/'+'{skins,cloaks}"',
             f'bash -c "chown -R {authbotUsername}:www-data /home/{authbotUsername}"',
-            f'bash -c "chmod -R 644 {scdir}/'+'{skins,cloaks}"'
+            f'bash -c "chmod -R 777 {scdir}/'+'{skins,cloaks}"'
         ]
         for cmd in commands:
             if exec(cmd):
