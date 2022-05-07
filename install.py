@@ -252,7 +252,8 @@ commands=[
     getBot(authbotUsername),
     createBotConfig(f'/home/{authbotUsername}/config.py', authbotUsername, authbotPassword, token, embedColor, commandPrefix, scdir, LauncherBinName, PublicServerIP, LaunchServerPort),
     createLSConfig(f'{LaunchServerPath}/LaunchServer.json', LaunchServerUsername, LaunchServerPassword, apachePort, PublicServerIP),
-    cretaeTextureProvider(scdir, PublicServerIP, apachePort, giveDefaultSkin)
+    cretaeTextureProvider(scdir, PublicServerIP, apachePort, giveDefaultSkin),
+    finaly(scdir, authbotUsername)
 ]
 
 for cmd in commands:
