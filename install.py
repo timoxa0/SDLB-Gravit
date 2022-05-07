@@ -90,7 +90,7 @@ def setMySQLPassword():
 def createTable(mysqlpassword, authbotUsername, authbotPassword, LaunchServerUsername, LaunchServerPassword):
     try:
         if exec(f'mysql -e "ALTER USER \'root\'@\'localhost\' IDENTIFIED BY \'{mysqlpassword}\';"'):
-            command = f'CREATE USER \'{LaunchServerUsername}\'@\'localhost\' IDENTIFIED BY \'{LaunchServerPassword}\';\nCREATE USER \'{authbotUsername}\'@\'localhost\' IDENTIFIED BY \'{authbotPassword}\';\nCREATE DATABASE db;\nGRANT ALL PRIVILEGES ON db . * TO \'launchserver\'@\'localhost\';\nGRANT ALL PRIVILEGES ON db . * TO \'authbot\'@\'localhost\';\nFLUSH PRIVILEGES;\n\nUSE db;\n\nCREATE TABLE `users` (\n  `id` varchar(255) NOT NULL,\n  `username` varchar(255) UNIQUE DEFAULT NULL,\n  `password` varchar(255) DEFAULT NULL,\n  `uuid` char(36) UNIQUE DEFAULT NULL,\n  `accessToken` char(32) DEFAULT NULL,\n  `serverID` varchar(41) DEFAULT NULL,\n  `hwidId` bigint DEFAULT NULL,\n  PRIMARY KEY (`id`)\n);\n\nCREATE TRIGGER setUUID BEFORE INSERT ON users\nFOR EACH ROW BEGIN\nIF NEW.uuid IS NULL THEN\nSET NEW.uuid = UUID();\nEND IF;\nEND;\n\nDELIMITER //\nCREATE TRIGGER setUUID BEFORE INSERT ON users\nFOR EACH ROW BEGIN\nIF NEW.uuid IS NULL THEN\nSET NEW.uuid = UUID();\nEND IF;\nEND; //\nDELIMITER ;\n\nUPDATE users SET uuid=(SELECT UUID()) WHERE uuid IS NULL;\n\nCREATE TABLE `hwids` (\n`id` bigint(20) NOT NULL,\n`publickey` blob,\n`hwDiskId` varchar(255) DEFAULT NULL,\n`baseboardSerialNumber` varchar(255) DEFAULT NULL,\n`graphicCard` varchar(255) DEFAULT NULL,\n`displayId` blob,\n`bitness` int(11) DEFAULT NULL,\n`totalMemory` bigint(20) DEFAULT NULL,\n`logicalProcessors` int(11) DEFAULT NULL,\n`physicalProcessors` int(11) DEFAULT NULL,\n`processorMaxFreq` bigint(11) DEFAULT NULL,\n`battery` tinyint(1) NOT NULL DEFAULT "0",\n`banned` tinyint(1) NOT NULL DEFAULT "0"\n) ENGINE=InnoDB DEFAULT CHARSET=utf8;\nALTER TABLE `hwids`\nADD PRIMARY KEY (`id`),\nADD UNIQUE KEY `publickey` (`publickey`(255));\nALTER TABLE `hwids`\nMODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT;\nALTER TABLE `users`\nADD CONSTRAINT `users_hwidfk` FOREIGN KEY (`hwidId`) REFERENCES `hwids` (`id`);\n'
+            command = f'CREATE USER \'{LaunchServerUsername}\'@\'localhost\' IDENTIFIED BY \'{LaunchServerPassword}\';\nCREATE USER \'{authbotUsername}\'@\'localhost\' IDENTIFIED BY \'{authbotPassword}\';\nCREATE DATABASE db;\nGRANT ALL PRIVILEGES ON db . * TO \'{LaunchServerUsername}\'@\'localhost\';\nGRANT ALL PRIVILEGES ON db . * TO \'{authbotPassword}\'@\'localhost\';\nFLUSH PRIVILEGES;\n\nUSE db;\n\nCREATE TABLE `users` (\n  `id` varchar(255) NOT NULL,\n  `username` varchar(255) UNIQUE DEFAULT NULL,\n  `password` varchar(255) DEFAULT NULL,\n  `uuid` char(36) UNIQUE DEFAULT NULL,\n  `accessToken` char(32) DEFAULT NULL,\n  `serverID` varchar(41) DEFAULT NULL,\n  `hwidId` bigint DEFAULT NULL,\n  PRIMARY KEY (`id`)\n);\n\nCREATE TRIGGER setUUID BEFORE INSERT ON users\nFOR EACH ROW BEGIN\nIF NEW.uuid IS NULL THEN\nSET NEW.uuid = UUID();\nEND IF;\nEND;\n\nDELIMITER //\nCREATE TRIGGER setUUID BEFORE INSERT ON users\nFOR EACH ROW BEGIN\nIF NEW.uuid IS NULL THEN\nSET NEW.uuid = UUID();\nEND IF;\nEND; //\nDELIMITER ;\n\nUPDATE users SET uuid=(SELECT UUID()) WHERE uuid IS NULL;\n\nCREATE TABLE `hwids` (\n`id` bigint(20) NOT NULL,\n`publickey` blob,\n`hwDiskId` varchar(255) DEFAULT NULL,\n`baseboardSerialNumber` varchar(255) DEFAULT NULL,\n`graphicCard` varchar(255) DEFAULT NULL,\n`displayId` blob,\n`bitness` int(11) DEFAULT NULL,\n`totalMemory` bigint(20) DEFAULT NULL,\n`logicalProcessors` int(11) DEFAULT NULL,\n`physicalProcessors` int(11) DEFAULT NULL,\n`processorMaxFreq` bigint(11) DEFAULT NULL,\n`battery` tinyint(1) NOT NULL DEFAULT "0",\n`banned` tinyint(1) NOT NULL DEFAULT "0"\n) ENGINE=InnoDB DEFAULT CHARSET=utf8;\nALTER TABLE `hwids`\nADD PRIMARY KEY (`id`),\nADD UNIQUE KEY `publickey` (`publickey`(255));\nALTER TABLE `hwids`\nMODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT;\nALTER TABLE `users`\nADD CONSTRAINT `users_hwidfk` FOREIGN KEY (`hwidId`) REFERENCES `hwids` (`id`);\n'
             with open('/tmp/sql', 'w') as f:
                 f.write(command)
             if exec(f'mysql -uroot -p{mysqlpassword} -e "source /tmp/sql"'):
@@ -187,51 +187,51 @@ def getBot(authbotUsername):
         else:
             return False
 
-while True:
-    token = input('Enter bot token: ')
-    if token == '':
-        print(
-            ' ┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓\n',
-            '┃   Working without bot token not possible.   ┃\n',
-            '┃ Please re-run script and specify bot token. ┃\n',
-            '┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛'
-        )
-        sys.exit(22)
-    
-    PublicServerIP = dinput('Enter the public IP of server', getIP())
-    embedColor = dinput('Specify embed color (in hex)', '0x000000')
-    commandPrefix = dinput('Specify bot command prefix', '/')
-    LaunchServerPort = dinput('Enter LauncherServer port', '9274')
-    LauncherBinName = dinput('Enter Launcher build name (without .exe/.jar)', 'Launcher')
-    LaunchServerPath = dinput('Specify LaunchServer root folder', '/home/launcher')
-    apachePort = dinput('Specify port for apache', '8123')
-    giveDefaultSkin = question('Should skin system return default one if not found?', True)
-    scdir = dinput('Specify folder for skin web-system (will be created if not exists)', '/var/www/authbot')
-    mysqlpassword = dinput('Specify MySQL root password', 'toor')
-    LaunchServerUsername = dinput('Specify MySQL username for LaunchServer', 'launcherserver')
-    LaunchServerPassword = dinput(f'Specify MySQL username for {LaunchServerUsername}', 'password')
-    authbotUsername = dinput('Specify MySQL/Linux username for Discord Bot', 'authbot')
-    authbotPassword = dinput(f'Specify MySQL password for {authbotUsername}', 'password')
-    authbotPasswd = dinput(f'Specify Linux password for {authbotUsername} (Space for empty)', authbotPassword)
 
-    questionTable = '\n'\
-                    f'Bot token:\t\t\t{token[:15]}...\n'\
-                    f'Public server IP:\t\t{PublicServerIP}\n'\
-                    f'LaunchServer port:\t\t{LaunchServerPort}\n'\
-                    f'Launcher build name:\t\t{LauncherBinName}.(jar/exe)\n'\
-                    f'LaunchServer folder:\t\t{LaunchServerPath}\n'\
-                    f'Port for apache:\t\t{apachePort}\n'\
-                    f'Skin web-system folder:\t\t{scdir}\n'\
-                    f'Return default skin:\t\t{"yes" if giveDefaultSkin else "no"}\n'\
-                    f'MySQL root password:\t\t{mysqlpassword}\n'\
-                    f'{LaunchServerUsername} MySQL password:\t{LaunchServerPassword}\n'\
-                    f'{authbotUsername} MySQL password:\t\t{authbotPassword}\n'\
-                    f'{authbotUsername} Linux password:\t\t{authbotPasswd}\n'\
-    
-    print(questionTable, end='\n')
+token = input('Enter bot token: ')
+if token == '':
+    print(
+        ' ┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓\n',
+        '┃   Working without bot token not possible.   ┃\n',
+        '┃ Please re-run script and specify bot token. ┃\n',
+        '┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛'
+    )
+    sys.exit(22)
 
-    if question('Are you want to install DLB for Gravit?'):
-        break
+PublicServerIP = dinput('Enter the public IP of server', getIP())
+embedColor = dinput('Specify embed color (in hex)', '0x000000')
+commandPrefix = dinput('Specify bot command prefix', '/')
+LaunchServerPort = dinput('Enter LauncherServer port', '9274')
+LauncherBinName = dinput('Enter Launcher build name (without .exe/.jar)', 'Launcher')
+LaunchServerPath = dinput('Specify LaunchServer root folder', '/home/launcher')
+apachePort = dinput('Specify port for apache', '8123')
+giveDefaultSkin = question('Should skin system return default one if not found?', True)
+scdir = dinput('Specify folder for skin web-system (will be created if not exists)', '/var/www/authbot')
+mysqlpassword = dinput('Specify MySQL root password', 'toor')
+LaunchServerUsername = dinput('Specify MySQL username for LaunchServer', 'launchserver')
+LaunchServerPassword = dinput(f'Specify MySQL username for {LaunchServerUsername}', 'password')
+authbotUsername = dinput('Specify MySQL/Linux username for Discord Bot', 'authbot')
+authbotPassword = dinput(f'Specify MySQL password for {authbotUsername}', 'password')
+authbotPasswd = dinput(f'Specify Linux password for {authbotUsername} (Space for empty)', authbotPassword)
+
+questionTable = '\n'\
+                f'Bot token:\t\t\t{token[:15]}...\n'\
+                f'Public server IP:\t\t{PublicServerIP}\n'\
+                f'LaunchServer port:\t\t{LaunchServerPort}\n'\
+                f'Launcher build name:\t\t{LauncherBinName}.(jar/exe)\n'\
+                f'LaunchServer folder:\t\t{LaunchServerPath}\n'\
+                f'Port for apache:\t\t{apachePort}\n'\
+                f'Skin web-system folder:\t\t{scdir}\n'\
+                f'Return default skin:\t\t{"yes" if giveDefaultSkin else "no"}\n'\
+                f'MySQL root password:\t\t{mysqlpassword}\n'\
+                f'{LaunchServerUsername} MySQL password:\t{LaunchServerPassword}\n'\
+                f'{authbotUsername} MySQL password:\t\t{authbotPassword}\n'\
+                f'{authbotUsername} Linux password:\t\t{authbotPasswd}\n'\
+
+print(questionTable, end='\n')
+
+if question('Are you want to install DLB for Gravit?', False):
+    sys.exit(22)
 
 commands=[
     createUser(authbotUsername, authbotPasswd, scdir),
