@@ -10,7 +10,7 @@
 
 Зайдите под рута, закройте LaunchServer и выполните команду:
 
-curl -o setup.sh https://raw.githubusercontent.com/timoxa0/SDLB-Gravit/main/setup.sh && chmod +x setup.sh && ./setup.sh && rm ./setup.sh
+`curl -o setup.sh https://raw.githubusercontent.com/timoxa0/SDLB-Gravit/main/setup.sh && chmod +x setup.sh && ./setup.sh && rm ./setup.sh`
 
 После установки зависимостей таких, как apache2 и mariadb-server, вам будут заданы вопросы, ответьте на них, после этого начнётся установка. После успешной установки можно запускать LaunchServer и, зайдя под пользователя, имя которого было указано при установке, выполнить команду ./startscreen.sh
 
