@@ -200,7 +200,9 @@ def finaly(scdir, authbotUsername):
             f'bash -c "mkdir {scdir}/'+'{skins,cloaks}"',
             f'bash -c "chown -R {authbotUsername}:www-data {scdir}/'+'{skins,cloaks}"',
             f'bash -c "chown -R {authbotUsername}:www-data /home/{authbotUsername}"',
-            f'bash -c "chmod -R 777 {scdir}/'+'{skins,cloaks}"'
+            f'bash -c "chmod -R 777 {scdir}/'+'{skins,cloaks}"',
+            f'"chmod +x /home/{authbotUsername}/'+'{main.py",start.sh,startscreen.sh}"',
+            f'"rm /home/{authbotUsername}/'+'{sql-commands.txt,gravitAuthExample.txt}"'
         ]
         for cmd in commands:
             if exec(cmd):
@@ -249,8 +251,8 @@ questionTable = '\n'\
                 f'Return default skin:\t\t{"yes" if giveDefaultSkin else "no"}\n'\
                 f'root`s MySQL password:\t\t{mysqlpassword}\n'\
                 f'{LaunchServerUsername}`s MySQL password:\t{LaunchServerPassword}\n'\
-                f'{authbotUsername}`s MySQL password:\t\t{authbotPassword}\n'\
-                f'{authbotUsername}`s Linux password:\t\t{authbotPasswd}\n'\
+                f'{authbotUsername}`s MySQL password:\t{authbotPassword}\n'\
+                f'{authbotUsername}`s Linux password:\t{authbotPasswd}\n'\
 
 print(questionTable, end='\n')
 
