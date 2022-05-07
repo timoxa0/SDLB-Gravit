@@ -1,5 +1,4 @@
 import os, signal, sys, requests, json
-from tools import *
 
 
 def sigint_handler(signal, frame):
