@@ -79,9 +79,13 @@ def getIP():
         return data['ip']
 
 def exec(command):
-    ec = os.system(command)
-    return True
+    if os.system(command) == 0:
+        return True
+    else:
+        return False
 
+def setMySQLPassword():
+    return exec(f'mysql -e "ALTER USER \'root\'@\'localhost\' IDENTIFIED BY \'{password}\';"')
 
 def createTable(mysqlpassword, authbotUsername, authbotPassword, LaunchServerUsername, LaunchServerPassword):
     try:
@@ -89,26 +93,16 @@ def createTable(mysqlpassword, authbotUsername, authbotPassword, LaunchServerUse
             command = f'CREATE USER \'{LaunchServerUsername}\'@\'localhost\' IDENTIFIED BY \'{LaunchServerPassword}\';\nCREATE USER \'{authbotUsername}\'@\'localhost\' IDENTIFIED BY \'{authbotPassword}\';\nCREATE DATABASE db;\nGRANT ALL PRIVILEGES ON db . * TO \'{LaunchServerUsername}\'@\'localhost\';\nGRANT ALL PRIVILEGES ON db . * TO \'{authbotUsername}\'@\'localhost\';\nFLUSH PRIVILEGES;\n\nUSE db;\n\nCREATE TABLE `users` (\n  `id` varchar(255) NOT NULL,\n  `username` varchar(255) UNIQUE DEFAULT NULL,\n  `password` varchar(255) DEFAULT NULL,\n  `uuid` char(36) UNIQUE DEFAULT NULL,\n  `accessToken` char(32) DEFAULT NULL,\n  `serverID` varchar(41) DEFAULT NULL,\n  `hwidId` bigint DEFAULT NULL,\n  PRIMARY KEY (`id`)\n);\n\nCREATE TRIGGER setUUID BEFORE INSERT ON users\nFOR EACH ROW BEGIN\nIF NEW.uuid IS NULL THEN\nSET NEW.uuid = UUID();\nEND IF;\nEND;\n\nDELIMITER //\nCREATE TRIGGER setUUID BEFORE INSERT ON users\nFOR EACH ROW BEGIN\nIF NEW.uuid IS NULL THEN\nSET NEW.uuid = UUID();\nEND IF;\nEND; //\nDELIMITER ;\n\nUPDATE users SET uuid=(SELECT UUID()) WHERE uuid IS NULL;\n\nCREATE TABLE `hwids` (\n`id` bigint(20) NOT NULL,\n`publickey` blob,\n`hwDiskId` varchar(255) DEFAULT NULL,\n`baseboardSerialNumber` varchar(255) DEFAULT NULL,\n`graphicCard` varchar(255) DEFAULT NULL,\n`displayId` blob,\n`bitness` int(11) DEFAULT NULL,\n`totalMemory` bigint(20) DEFAULT NULL,\n`logicalProcessors` int(11) DEFAULT NULL,\n`physicalProcessors` int(11) DEFAULT NULL,\n`processorMaxFreq` bigint(11) DEFAULT NULL,\n`battery` tinyint(1) NOT NULL DEFAULT "0",\n`banned` tinyint(1) NOT NULL DEFAULT "0"\n) ENGINE=InnoDB DEFAULT CHARSET=utf8;\nALTER TABLE `hwids`\nADD PRIMARY KEY (`id`),\nADD UNIQUE KEY `publickey` (`publickey`(255));\nALTER TABLE `hwids`\nMODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT;\nALTER TABLE `users`\nADD CONSTRAINT `users_hwidfk` FOREIGN KEY (`hwidId`) REFERENCES `hwids` (`id`);\n'
             with open('/tmp/sql', 'w') as f:
                 f.write(command)
-            exec(f'mysql -uroot -p{mysqlpassword} -e "source /tmp/sql" > /dev/null')
+            exec(f'mysql -uroot -p{mysqlpassword} -e "source /tmp/sql"')
         else:
             return False
     except Exception as ex:
         print(ex)
         return False
-    finally:
-        print('MySQL')
-
 
 def createBotConfig(botConfigPath, authbotUsername, authbotPassword, token, embedColor, commandPrefix, scdir, LauncherBinName, PublicServerIP, LaunchServerPort):
-    try:
-        with open(botConfigPath, 'w') as f:
-            f.write(templates.botConfig(authbotUsername, authbotPassword, token, embedColor, commandPrefix, scdir, LauncherBinName, PublicServerIP, LaunchServerPort))
-        return True
-    except Exception as ex:
-        print(ex)
-        return False
-    finally:
-        print('BotConfig')
+    with open(botConfigPath, 'w') as f:
+        f.write(templates.botConfig(authbotUsername, authbotPassword, token, embedColor, commandPrefix, scdir, LauncherBinName, PublicServerIP, LaunchServerPort))
 
 def createLSConfig(LaunchServerConfigPath, LaunchServerUsername, LaunchServerPassword, apachePort, PublicServerIP):
     try:
@@ -129,9 +123,6 @@ def createLSConfig(LaunchServerConfigPath, LaunchServerUsername, LaunchServerPas
     except Exception as ex:
         print(ex)
         return False
-    finally:
-        print('LSConfig')
-
 
 def cretaeTextureProvider(scdir, PublicServerIP, apachePort, giveDefaultSkin):
     try:
@@ -143,12 +134,10 @@ def cretaeTextureProvider(scdir, PublicServerIP, apachePort, giveDefaultSkin):
     except Exception as ex:
         print(ex)
         return False
-    finally:
-        print('TextureProvider')
 
 def createUser(authbotUsername, authbotPasswd, scdir):
     try:
-        commands = [f'useradd -m -G www-data {authbotUsername} -s /bin/bash']
+        commands = [f'useradd -G www-data {authbotUsername} -s /bin/bash']
         if authbotPasswd != '':
             commands.append(f'(echo {authbotPasswd}; echo {authbotPasswd}) | passwd {authbotUsername}')
         for cmd in commands:
@@ -156,12 +145,9 @@ def createUser(authbotUsername, authbotPasswd, scdir):
                 pass
             else:
                 return False
-        return True
     except Exception as ex:
         print(ex)
         return False
-    finally:
-        print('User')
 
 def createApache(scdir, apachePort):
     try:
@@ -183,30 +169,36 @@ def createApache(scdir, apachePort):
                 pass
             else:
                 return False
-        return True
     except Exception as ex:
         print(ex)
         return False
-    finally:
-        print('Apache')
 
 def getBot(authbotUsername):
+    commands = [
+        f'git clone https://github.com/timoxa0/discord-auth /home/{authbotUsername}',
+        f'pip install -r /home/{authbotUsername}/requirements.txt'
+    ]
+    for cmd in commands:
+        if exec(cmd):
+            pass
+        else:
+            return False
+
+def finaly(scdir, authbotUsername):
     try:
         commands = [
-            f'git clone https://github.com/timoxa0/discord-auth /home/{authbotUsername}',
-            f'pip install -r /home/{authbotUsername}/requirements.txt'
+            f'bash -c "chown -R {authbotUsername}:www-data {scdir}/'+'{skins,cloaks}"',
+            f'bash -c "chown -R {authbotUsername}:www-data /home/{authbotUsername}"',
+            f'bash -c "chmod -R 644 {scdir}/'+'{skins,cloaks}"'
         ]
         for cmd in commands:
             if exec(cmd):
                 pass
             else:
                 return False
-        return True
     except Exception as ex:
         print(ex)
         return False
-    finally:
-        print('Bot')
 
 token = input('Enter bot token: ')
 if token == '':
@@ -250,14 +242,32 @@ questionTable = '\n'\
 
 print(questionTable, end='\n')
 
-if not question('Are you want to install DLB for Gravit?', False):
+if question('Are you want to install DLB for Gravit?', False):
     sys.exit(22)
 
+commands=[
+    createUser(authbotUsername, authbotPasswd, scdir),
+    createTable(mysqlpassword, authbotUsername, authbotPassword, LaunchServerUsername, LaunchServerPassword),
+    createApache(scdir, apachePort),
+    getBot(authbotUsername),
+    createBotConfig(f'/home/{authbotUsername}/config.py', authbotUsername, authbotPassword, token, embedColor, commandPrefix, scdir, LauncherBinName, PublicServerIP, LaunchServerPort),
+    createLSConfig(f'{LaunchServerPath}/LaunchServer.json', LaunchServerUsername, LaunchServerPassword, apachePort, PublicServerIP),
+    cretaeTextureProvider(scdir, PublicServerIP, apachePort, giveDefaultSkin)
+]
 
-createUser(authbotUsername, authbotPasswd, scdir)
-createTable(mysqlpassword, authbotUsername, authbotPassword, LaunchServerUsername, LaunchServerPassword)
-createApache(scdir, apachePort)
-getBot(authbotUsername)
-createBotConfig(f'/home/{authbotUsername}/config.py', authbotUsername, authbotPassword, token, embedColor, commandPrefix, scdir, LauncherBinName, PublicServerIP, LaunchServerPort)
-createLSConfig(f'{LaunchServerPath}/LaunchServer.json', LaunchServerUsername, LaunchServerPassword, apachePort, PublicServerIP)
-cretaeTextureProvider(scdir, PublicServerIP, apachePort, giveDefaultSkin)
+for cmd in commands:
+    if not cmd:
+        print(
+            ' ┏━━━━━━━━━━━━━━━━━━━━━━━━━━━┓\n',
+            '┃   Something went wrong.   ┃\n',
+            '┃         Exiting...        ┃\n',
+            '┗━━━━━━━━━━━━━━━━━━━━━━━━━━━┛'
+        )
+        sys.exit(1)
+
+print(
+        ' ┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓\n',
+        '┃          Installation complete!         ┃\n',
+        '┃   Now you can start your LaunchServer   ┃\n',
+        '┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛'
+    )
