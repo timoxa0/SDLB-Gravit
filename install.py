@@ -96,6 +96,7 @@ def createTable(mysqlpassword, authbotUsername, authbotPassword, LaunchServerUse
             exec(f'mysql -uroot -p{mysqlpassword} -e "source /tmp/sql"')
         else:
             return False
+        return True
     except Exception as ex:
         print(ex)
         return False
@@ -247,25 +248,19 @@ if not question('Are you want to install DLB for Gravit?', False):
     sys.exit(22)
 
 commands=[
-    createUser(authbotUsername, authbotPasswd, scdir),
-    createTable(mysqlpassword, authbotUsername, authbotPassword, LaunchServerUsername, LaunchServerPassword),
-    createApache(scdir, apachePort),
-    getBot(authbotUsername),
-    createBotConfig(f'/home/{authbotUsername}/config.py', authbotUsername, authbotPassword, token, embedColor, commandPrefix, scdir, LauncherBinName, PublicServerIP, LaunchServerPort),
-    createLSConfig(f'{LaunchServerPath}/LaunchServer.json', LaunchServerUsername, LaunchServerPassword, apachePort, PublicServerIP),
-    cretaeTextureProvider(scdir, PublicServerIP, apachePort, giveDefaultSkin),
-    finaly(scdir, authbotUsername)
+    'createUser(authbotUsername, authbotPasswd, scdir)',
+    'createTable(mysqlpassword, authbotUsername, authbotPassword, LaunchServerUsername, LaunchServerPassword)',
+    'createApache(scdir, apachePort)',
+    'getBot(authbotUsername)',
+    'createBotConfig(f\'/home/{authbotUsername}/config.py\', authbotUsername, authbotPassword, token, embedColor, commandPrefix, scdir, LauncherBinName, PublicServerIP, LaunchServerPort)',
+    'createLSConfig(f\'{LaunchServerPath}/LaunchServer.json\', LaunchServerUsername, LaunchServerPassword, apachePort, PublicServerIP)',
+    'cretaeTextureProvider(scdir, PublicServerIP, apachePort, giveDefaultSkin)',
+    'finaly(scdir, authbotUsername)'
 ]
 
-for cmd in len(commands):
-    if not commands[cmd]:
-        print(
-            ' ┏━━━━━━━━━━━━━━━━━━━━━━━━━━━┓\n',
-            '┃   Something went wrong.   ┃\n',
-            '┃         Exiting...        ┃\n',
-            '┗━━━━━━━━━━━━━━━━━━━━━━━━━━━┛',
-            commands[cmd]
-        )
+for cmd in commands:
+    if not eval(cmd):
+        print(f'Error in command {cmd}')
         sys.exit(1)
 
 print(
