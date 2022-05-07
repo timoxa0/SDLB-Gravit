@@ -94,6 +94,8 @@ def createTable(mysqlpassword, authbotUsername, authbotPassword, LaunchServerUse
     except Exception as ex:
         print(ex)
         return False
+    finally:
+        print('MySQL')
 
 
 def createBotConfig(botConfigPath, authbotUsername, authbotPassword, token, embedColor, commandPrefix, scdir, LauncherBinName, PublicServerIP, LaunchServerPort):
@@ -104,7 +106,8 @@ def createBotConfig(botConfigPath, authbotUsername, authbotPassword, token, embe
     except Exception as ex:
         print(ex)
         return False
-
+    finally:
+        print('BotConfig')
 
 def createLSConfig(LaunchServerConfigPath, LaunchServerUsername, LaunchServerPassword, apachePort, PublicServerIP):
     try:
@@ -125,6 +128,8 @@ def createLSConfig(LaunchServerConfigPath, LaunchServerUsername, LaunchServerPas
     except Exception as ex:
         print(ex)
         return False
+    finally:
+        print('LSConfig')
 
 
 def cretaeTextureProvider(scdir, PublicServerIP, apachePort, giveDefaultSkin):
@@ -137,7 +142,8 @@ def cretaeTextureProvider(scdir, PublicServerIP, apachePort, giveDefaultSkin):
     except Exception as ex:
         print(ex)
         return False
-
+    finally:
+        print('TextureProvider')
 
 def createUser(authbotUsername, authbotPasswd, scdir):
     try:
@@ -153,7 +159,8 @@ def createUser(authbotUsername, authbotPasswd, scdir):
     except Exception as ex:
         print(ex)
         return False
-
+    finally:
+        print('User')
 
 def createApache(scdir, apachePort):
     try:
@@ -179,7 +186,8 @@ def createApache(scdir, apachePort):
     except Exception as ex:
         print(ex)
         return False
-
+    finally:
+        print('Apache')
 
 def getBot(authbotUsername):
     try:
@@ -196,7 +204,8 @@ def getBot(authbotUsername):
     except Exception as ex:
         print(ex)
         return False
-
+    finally:
+        print('Bot')
 
 token = input('Enter bot token: ')
 if token == '':
@@ -244,10 +253,10 @@ if not question('Are you want to install DLB for Gravit?', False):
     sys.exit(22)
 
 
-createUser(authbotUsername, authbotPasswd, scdir),
-createTable(mysqlpassword, authbotUsername, authbotPassword, LaunchServerUsername, LaunchServerPassword),
-createApache(scdir, apachePort),
-getBot(authbotUsername),
-createBotConfig(f'/home/{authbotUsername}/config.py', authbotUsername, authbotPassword, token, embedColor, commandPrefix, scdir, LauncherBinName, PublicServerIP, LaunchServerPort),
-createLSConfig(f'{LaunchServerPath}/LaunchServer.json', LaunchServerUsername, LaunchServerPassword, apachePort, PublicServerIP),
+createUser(authbotUsername, authbotPasswd, scdir)
+createTable(mysqlpassword, authbotUsername, authbotPassword, LaunchServerUsername, LaunchServerPassword)
+createApache(scdir, apachePort)
+getBot(authbotUsername)
+createBotConfig(f'/home/{authbotUsername}/config.py', authbotUsername, authbotPassword, token, embedColor, commandPrefix, scdir, LauncherBinName, PublicServerIP, LaunchServerPort)
+createLSConfig(f'{LaunchServerPath}/LaunchServer.json', LaunchServerUsername, LaunchServerPassword, apachePort, PublicServerIP)
 cretaeTextureProvider(scdir, PublicServerIP, apachePort, giveDefaultSkin)
