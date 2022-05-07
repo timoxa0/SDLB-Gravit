@@ -166,7 +166,6 @@ def createApache(scdir, apachePort):
             f.write(templates.apacheDefault())
                 
         commands = [
-            f'bash -c "mkdir {scdir}/'+'{skins,cloaks}"',
             'a2ensite -q AuthBot',
             'systemctl restart apache2'
         ]
@@ -196,6 +195,7 @@ def getBot(authbotUsername):
 def finaly(scdir, authbotUsername):
     try:
         commands = [
+            f'bash -c "mkdir {scdir}/'+'{skins,cloaks}"',
             f'bash -c "chown -R {authbotUsername}:www-data {scdir}/'+'{skins,cloaks}"',
             f'bash -c "chown -R {authbotUsername}:www-data /home/{authbotUsername}"',
             f'bash -c "chmod -R 777 {scdir}/'+'{skins,cloaks}"'
