@@ -136,16 +136,13 @@ def cretaeTextureProvider(scdir, PublicServerIP, apachePort, giveDefaultSkin):
         print(ex)
         return False
 
-def createUser(authbotUsername, authbotPasswd, scdir):
+def createUser(authbotUsername, authbotPasswd):
     try:
         commands = [f'useradd -G www-data {authbotUsername} -s /bin/bash']
         if authbotPasswd != '':
             commands.append(f'(echo {authbotPasswd}; echo {authbotPasswd}) | passwd {authbotUsername}')
         for cmd in commands:
-            if exec(cmd):
-                pass
-            else:
-                return False
+            exec(cmd)
         return True
     except Exception as ex:
         print(ex)
