@@ -1,4 +1,4 @@
-# Discord бот-лк для gravit
+# Discord бот-лк для Gravit Launcher
 
 ### Описание
 
