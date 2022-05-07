@@ -5,7 +5,9 @@
 
 ### Установка и настройка
 
-Перед тем, как установить этого бота необходимо установить [Gravit Launcher](https://launcher.gravit.pro/install/#настроика-хостинга "GravitLauncher") 
+Перед тем, как установить этого бота необходимо установить [Gravit Launcher](https://launcher.gravit.pro/install/#настроика-хостинга "Gravit Launcher Wiki") 
+
+Получите токен бота [здесь](https://discord.com/developers/applications "Discord Developer Portal"), создайте приложение, в нём бота, нажмите Reset Token, потом Copy, вставьте куда-нибудь полученый токен и солзраните.
 
 Зайдите под рута, закройте LaunchServer и выполните команду:
 
