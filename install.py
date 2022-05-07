@@ -201,7 +201,7 @@ def finaly(scdir, authbotUsername):
             f'bash -c "chown -R {authbotUsername}:www-data {scdir}/'+'{skins,cloaks}"',
             f'bash -c "chown -R {authbotUsername}:www-data /home/{authbotUsername}"',
             f'bash -c "chmod -R 777 {scdir}/'+'{skins,cloaks}"',
-            f'bash -c "chmod +x /home/{authbotUsername}/'+'{main.py",start.sh,startscreen.sh}"',
+            f'bash -c "chmod +x /home/{authbotUsername}/'+'{main.py,start.sh,startscreen.sh}"',
             f'bash -c "rm /home/{authbotUsername}/'+'{sql-commands.txt,gravitAuthExample.txt}"'
         ]
         for cmd in commands:
