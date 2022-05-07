@@ -38,7 +38,7 @@ class templates():
                 'db[\'host\'] = \'localhost\'\n'\
                 f'db[\'login\'] = \'{authbotUsername}\'\n'\
                 f'db[\'password\'] = \'{authbotPassword}\'\n'\
-                'db[\'db_name\'] = \'launcher\'\n'\
+                'db[\'db_name\'] = \'db\'\n'\
                 '\n'\
                 f'embedColor = {embedColor}'
 
@@ -226,7 +226,7 @@ giveDefaultSkin = question('Should skin system return default one if not found?'
 scdir = dinput('Specify folder for skin web-system (will be created if not exists)', '/var/www/authbot')
 mysqlpassword = dinput('Specify MySQL root password', 'toor')
 LaunchServerUsername = dinput('Specify MySQL username for LaunchServer', 'launchserver')
-LaunchServerPassword = dinput(f'Specify MySQL username for {LaunchServerUsername}', 'password')
+LaunchServerPassword = dinput(f'Specify MySQL password for {LaunchServerUsername}', 'password')
 authbotUsername = dinput('Specify MySQL/Linux username for Discord Bot', 'authbot')
 authbotPassword = dinput(f'Specify MySQL password for {authbotUsername}', 'password')
 authbotPasswd = dinput(f'Specify Linux password for {authbotUsername} (Space for empty)', authbotPassword)
