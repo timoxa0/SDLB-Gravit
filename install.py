@@ -80,6 +80,7 @@ def getIP():
 
 def exec(command):
     ec = os.system(command)
+    return True
 
 
 def createTable(mysqlpassword, authbotUsername, authbotPassword, LaunchServerUsername, LaunchServerPassword):
