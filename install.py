@@ -242,7 +242,7 @@ questionTable = '\n'\
 
 print(questionTable, end='\n')
 
-if question('Are you want to install DLB for Gravit?', False):
+if not question('Are you want to install DLB for Gravit?', False):
     sys.exit(22)
 
 commands=[
