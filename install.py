@@ -84,9 +84,6 @@ def exec(command):
     else:
         return False
 
-def setMySQLPassword():
-    return exec(f'mysql -e "ALTER USER \'root\'@\'localhost\' IDENTIFIED BY \'{password}\';"')
-
 def createTable(mysqlpassword, authbotUsername, authbotPassword, LaunchServerUsername, LaunchServerPassword):
     try:
         if exec(f'mysql -e "ALTER USER \'root\'@\'localhost\' IDENTIFIED BY \'{mysqlpassword}\';"'):
@@ -102,8 +99,13 @@ def createTable(mysqlpassword, authbotUsername, authbotPassword, LaunchServerUse
         return False
 
 def createBotConfig(botConfigPath, authbotUsername, authbotPassword, token, embedColor, commandPrefix, scdir, LauncherBinName, PublicServerIP, LaunchServerPort):
-    with open(botConfigPath, 'w') as f:
-        f.write(templates.botConfig(authbotUsername, authbotPassword, token, embedColor, commandPrefix, scdir, LauncherBinName, PublicServerIP, LaunchServerPort))
+    try:
+        with open(botConfigPath, 'w') as f:
+            f.write(templates.botConfig(authbotUsername, authbotPassword, token, embedColor, commandPrefix, scdir, LauncherBinName, PublicServerIP, LaunchServerPort))
+        return True
+    except Exception as ex:
+        print(ex)
+        return False
 
 def createLSConfig(LaunchServerConfigPath, LaunchServerUsername, LaunchServerPassword, apachePort, PublicServerIP):
     try:
@@ -168,20 +170,23 @@ def createApache(scdir, apachePort):
                 pass
             else:
                 return False
+        return True
     except Exception as ex:
         print(ex)
         return False
 
 def getBot(authbotUsername):
-    commands = [
-        f'git clone https://github.com/timoxa0/discord-auth /home/{authbotUsername}',
-        f'pip install -r /home/{authbotUsername}/requirements.txt'
-    ]
-    for cmd in commands:
-        if exec(cmd):
-            pass
-        else:
-            return False
+    try:
+        commands = [
+            f'git clone https://github.com/timoxa0/discord-auth /home/{authbotUsername}',
+            f'pip install -r /home/{authbotUsername}/requirements.txt'
+        ]
+        for cmd in commands:
+            exec(cmd)
+        return True
+    except Exception as ex:
+        print(ex)
+        return False
 
 def finaly(scdir, authbotUsername):
     try:
