@@ -1,4 +1,5 @@
 import os, signal, sys, requests, json
+from tools import *
 
 
 def sigint_handler(signal, frame):
@@ -38,7 +39,9 @@ class templates():
                 'db[\'host\'] = \'localhost\'\n'\
                 f'db[\'login\'] = \'{authbotUsername}\'\n'\
                 f'db[\'password\'] = \'{authbotPassword}\'\n'\
-                'db[\'db_name\'] = \'launcher\''
+                'db[\'db_name\'] = \'launcher\'\n'\
+                '\n'\
+                f'embedColor = {embedColor}'
 
     def launcherServerConfig(LaunchServerUsername, LaunchServerPassword, apachePort, PublicServerIP):
         return {'textureProvider': {'type': 'json', 'url': f'http://{PublicServerIP}:{apachePort}/TextureProvider.php?login=%username%'}, 'core': {'type': 'mysql', 'mySQLHolder': {'address': 'localhost', 'port': 3306, 'username': f'{LaunchServerUsername}', 'password': f'{LaunchServerPassword}', 'database': 'db?serverTimezone=UTC', 'timezone': 'UTC', 'useHikari': True}, 'passwordVerifier': {'algo': 'SHA256', 'type': 'digest'}, 'expireSeconds': 3600, 'table': 'users', 'tableHwid': 'hwids', 'uuidColumn': 'uuid', 'usernameColumn': 'username', 'passwordColumn': 'password', 'accessTokenColumn': 'accessToken', 'hardwareIdColumn': 'hwidId', 'serverIDColumn': 'serverID'}, 'isDefault': True, 'displayName': 'Default'}
@@ -218,7 +221,6 @@ while True:
                     f'LaunchServer port:\t\t{LaunchServerPort}\n'\
                     f'Launcher build name:\t\t{LauncherBinName}.(jar/exe)\n'\
                     f'LaunchServer folder:\t\t{LaunchServerPath}\n'\
-                    f'AuthBot folder:\t\t{botPath}\n'\
                     f'Port for apache:\t\t{apachePort}\n'\
                     f'Skin web-system folder:\t\t{scdir}\n'\
                     f'Return default skin:\t\t{"yes" if giveDefaultSkin else "no"}\n'\
