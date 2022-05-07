@@ -146,6 +146,7 @@ def createUser(authbotUsername, authbotPasswd, scdir):
                 pass
             else:
                 return False
+        return True
     except Exception as ex:
         print(ex)
         return False
