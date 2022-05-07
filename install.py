@@ -257,13 +257,14 @@ commands=[
     finaly(scdir, authbotUsername)
 ]
 
-for cmd in commands:
-    if not cmd:
+for cmd in len(commands):
+    if not commands[cmd]:
         print(
             ' ┏━━━━━━━━━━━━━━━━━━━━━━━━━━━┓\n',
             '┃   Something went wrong.   ┃\n',
             '┃         Exiting...        ┃\n',
-            '┗━━━━━━━━━━━━━━━━━━━━━━━━━━━┛'
+            '┗━━━━━━━━━━━━━━━━━━━━━━━━━━━┛',
+            commands[cmd]
         )
         sys.exit(1)
 
