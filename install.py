@@ -246,7 +246,7 @@ if not question('Are you want to install DLB for Gravit?', False):
     sys.exit(22)
 
 commands=[
-    'createUser(authbotUsername, authbotPasswd, scdir)',
+    'createUser(authbotUsername, authbotPasswd)',
     'createTable(mysqlpassword, authbotUsername, authbotPassword, LaunchServerUsername, LaunchServerPassword)',
     'createApache(scdir, apachePort)',
     'getBot(authbotUsername)',
