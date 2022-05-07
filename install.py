@@ -95,7 +95,6 @@ def exec(command):
     else:
         return False
 
-@exitIfNotOK
 def createTable(mysqlpassword, authbotUsername, authbotPassword, LaunchServerUsername, LaunchServerPassword):
     try:
         if exec(f'mysql -e "ALTER USER \'root\'@\'localhost\' IDENTIFIED BY \'{mysqlpassword}\';"'):
