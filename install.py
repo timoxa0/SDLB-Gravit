@@ -1,5 +1,16 @@
 import os, signal, sys, requests, json
 
+def exitIfNotOK(cmd):
+    def wrapper(*args, **kwargs):
+        if not cmd(*args, **kwargs):
+            print(
+                ' ┏━━━━━━━━━━━━━━━━━━━━━━━━━━━┓\n',
+                '┃   Something went wrong.   ┃\n',
+                '┃         Exiting...        ┃\n',
+                '┗━━━━━━━━━━━━━━━━━━━━━━━━━━━┛'
+            )
+            sys.exit(1)
+    return wrapper
 
 def sigint_handler(signal, frame):
     print('\nExiting...')
@@ -84,9 +95,7 @@ def exec(command):
     else:
         return False
 
-def setMySQLPassword():
-    return exec(f'mysql -e "ALTER USER \'root\'@\'localhost\' IDENTIFIED BY \'{password}\';"')
-
+@exitIfNotOK
 def createTable(mysqlpassword, authbotUsername, authbotPassword, LaunchServerUsername, LaunchServerPassword):
     try:
         if exec(f'mysql -e "ALTER USER \'root\'@\'localhost\' IDENTIFIED BY \'{mysqlpassword}\';"'):
@@ -103,10 +112,12 @@ def createTable(mysqlpassword, authbotUsername, authbotPassword, LaunchServerUse
         print(ex)
         return False
 
+@exitIfNotOK
 def createBotConfig(botConfigPath, authbotUsername, authbotPassword, token, embedColor, commandPrefix, scdir, LauncherBinName, PublicServerIP, LaunchServerPort):
     with open(botConfigPath, 'w') as f:
         f.write(templates.botConfig(authbotUsername, authbotPassword, token, embedColor, commandPrefix, scdir, LauncherBinName, PublicServerIP, LaunchServerPort))
 
+@exitIfNotOK
 def createLSConfig(LaunchServerConfigPath, LaunchServerUsername, LaunchServerPassword, apachePort, PublicServerIP):
     try:
         with open(LaunchServerConfigPath, 'rb') as f:
@@ -127,6 +138,7 @@ def createLSConfig(LaunchServerConfigPath, LaunchServerUsername, LaunchServerPas
         print(ex)
         return False
 
+@exitIfNotOK
 def cretaeTextureProvider(scdir, PublicServerIP, apachePort, giveDefaultSkin):
     try:
         base = requests.get('https://raw.githubusercontent.com/microwin7/GravitLauncher-TextureProvider/main/TextureProvider.php').content.decode('utf-8')
@@ -138,6 +150,7 @@ def cretaeTextureProvider(scdir, PublicServerIP, apachePort, giveDefaultSkin):
         print(ex)
         return False
 
+@exitIfNotOK
 def createUser(authbotUsername, authbotPasswd, scdir):
     try:
         commands = [f'useradd -m -G www-data {authbotUsername} -s /bin/bash']
@@ -152,6 +165,7 @@ def createUser(authbotUsername, authbotPasswd, scdir):
         print(ex)
         return False
 
+@exitIfNotOK
 def createApache(scdir, apachePort):
     try:
         if not os.path.exists(scdir):
@@ -176,6 +190,7 @@ def createApache(scdir, apachePort):
         print(ex)
         return False
 
+@exitIfNotOK
 def getBot(authbotUsername):
     commands = [
         f'git clone https://github.com/timoxa0/discord-auth /home/{authbotUsername}',
@@ -230,25 +245,14 @@ questionTable = '\n'\
 
 print(questionTable, end='\n')
 
-if question('Are you want to install DLB for Gravit?', False):
+if not question('Are you want to install DLB for Gravit?', False):
     sys.exit(22)
 
-commands=[
-    createUser(authbotUsername, authbotPasswd, scdir),
-    createTable(mysqlpassword, authbotUsername, authbotPassword, LaunchServerUsername, LaunchServerPassword),
-    createApache(scdir, apachePort),
-    getBot(authbotUsername),
-    createBotConfig(f'/home/{authbotUsername}/config.py', authbotUsername, authbotPassword, token, embedColor, commandPrefix, scdir, LauncherBinName, PublicServerIP, LaunchServerPort),
-    createLSConfig(f'{LaunchServerPath}/LaunchServer.json', LaunchServerUsername, LaunchServerPassword, apachePort, PublicServerIP),
-    cretaeTextureProvider(scdir, PublicServerIP, apachePort, giveDefaultSkin)
-]
 
-for cmd in commands:
-    if not cmd:
-        print(
-            ' ┏━━━━━━━━━━━━━━━━━━━━━━━━━━━┓\n',
-            '┃   Something went wrong.   ┃\n',
-            '┃         Exiting...        ┃\n',
-            '┗━━━━━━━━━━━━━━━━━━━━━━━━━━━┛'
-        )
-        sys.exit(1)
+createUser(authbotUsername, authbotPasswd, scdir),
+createTable(mysqlpassword, authbotUsername, authbotPassword, LaunchServerUsername, LaunchServerPassword),
+createApache(scdir, apachePort),
+getBot(authbotUsername),
+createBotConfig(f'/home/{authbotUsername}/config.py', authbotUsername, authbotPassword, token, embedColor, commandPrefix, scdir, LauncherBinName, PublicServerIP, LaunchServerPort),
+createLSConfig(f'{LaunchServerPath}/LaunchServer.json', LaunchServerUsername, LaunchServerPassword, apachePort, PublicServerIP),
+cretaeTextureProvider(scdir, PublicServerIP, apachePort, giveDefaultSkin)
