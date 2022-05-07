@@ -166,7 +166,7 @@ def createApache(scdir, apachePort):
             f.write(templates.apacheDefault())
                 
         commands = [
-            f'bash -c "mkdir {scdir}/'+'{skins,cloaks}"'
+            f'bash -c "mkdir {scdir}/'+'{skins,cloaks}"',
             'a2ensite -q AuthBot',
             'systemctl restart apache2'
         ]
