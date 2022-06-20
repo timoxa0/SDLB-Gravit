@@ -10,8 +10,8 @@
 
 - Установите python3 `apt install -y python3, python3-pip`.
 
-- Создайте пользователя для бота командой `useradd -G www-data -s /bin/bash authbot`
-и перейдите в него `su -c authbot`
+- Создайте пользователя для бота командой `useradd -m -G www-data -s /bin/bash authbot`
+и перейдите в него `su - authbot`
 
 - Склонируйте репозиторий с ботом `git clone -b dev https://github.com/timoxa0/SDLB-Gravit`
 
