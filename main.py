@@ -3,6 +3,8 @@ from PIL import Image
 import threading
 import requests
 import discord
+import signal
+import sys
 
 import config
 import dbmanager
@@ -15,6 +17,8 @@ db = dbmanager.dbm(config.db['login'], config.db['password'], config.db['host'],
 
 schost, scport = config.scm['url'].split(':')
 scManager = scstorage.scstorage(config.scm['skindir'], config.scm['capedir'], schost, int(scport))
+
+
 
 async def register(message):
     try:
@@ -150,8 +154,13 @@ async def on_message(message):
         except(NameError):
             await message.channel.send('**Ошибка:** Команда не найдена!')
 
-        
+
+def signal_handler(signal, frame):
+    print('\nStopping!')
+    sys.exit(0)
+
 if __name__ == '__main__':
+    signal.signal(signal.SIGINT, signal_handler)
     scs_thread = threading.Thread(target=scManager.server)
     scs_thread.start()
     client.run(config.DISCORD_TOKEN)
