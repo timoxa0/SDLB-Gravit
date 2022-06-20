@@ -4,14 +4,19 @@
 
 ### Установка и настройка
 
-Перед тем, как установить этого бота необходимо установить [Gravit Launcher](https://launcher.gravit.pro/install/#настроика-хостинга "Gravit Launcher Wiki").
+Перед тем, как установить этого бота необходимо установить [Gravit Launcher](https://launcher.gravit.pro/install/#настроика-хостинга "Gravit Launcher Wiki") и настроить его на работу с MySQL.
 
-Получите токен бота [здесь](https://discord.com/developers/applications "Discord Developer Portal"), создайте приложение, в нём бота, нажмите Reset Token, потом Copy, вставьте куда-нибудь полученный токен и сохраните.
+- Получите токен бота [здесь](https://discord.com/developers/applications "Discord Developer Portal"), создайте приложение, в нём бота, нажмите Reset Token, потом Copy, сохраните этот токен.
 
-Зайдите под рута, закройте LaunchServer и выполните команду:
+- Установите python3 `apt install -y python3, python3-pip`.
 
-`curl -o setup.sh https://raw.githubusercontent.com/timoxa0/SDLB-Gravit/dev/setup.sh && chmod +x setup.sh && ./setup.sh && rm ./setup.sh`
+- Создайте пользователя для бота командой `useradd -G www-data -s /bin/bash authbot`
+и перейдите в него `su -c authbot`
 
-После установки зависимостей таких, как apache2 и mariadb-server, вам будут заданы вопросы, ответьте на них, после этого начнётся установка. После успешной установки можно запускать LaunchServer и, зайдя под пользователя, имя которого было указано при установке, выполнить команду ./startscreen.sh
+- Склонируйте репозиторий с ботом `git clone -b dev https://github.com/timoxa0/SDLB-Gravit`
 
-Можете посмотреть [это видео](https://youtu.be/p_yz3SgHRlw "Установка Discord бота - лк для Gravit Launcher") с демонстрацией и установкой
+- Настройте конфиг бота `config.py`
+
+- Сделайте стартеры запускаемыми `chmod +x {start.sh,startscreen.sh}`
+
+- Запуск бота для теста `./start.sh`, на постоянку `./startscreen.sh`
