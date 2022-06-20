@@ -17,6 +17,6 @@
 
 - Настройте конфиг бота `config.py`
 
-- Сделайте стартеры запускаемыми `chmod +x {start.sh,startscreen.sh}`
+- Сделайте стартеры запускаемыми `chmod +x {main.py,start.sh,startscreen.sh}`
 
 - Запуск бота для теста `./start.sh`, на постоянку `./startscreen.sh`
