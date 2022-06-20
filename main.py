@@ -1,13 +1,20 @@
 #!/bin/python3
 from PIL import Image
-import discord, requests, os, asyncio
-import config, manager
+import threading
+import requests
+import discord
+
+import config
+import dbmanager
+import scstorage
 
 client = discord.Client()
 
-db = manager.database(config.db['login'], config.db['password'], config.db['host'], config.db['db_name'])
+db = dbmanager.dbm(config.db['login'], config.db['password'], config.db['host'], config.db['db_name'])
 
-scManager = manager.skinsNcloaks(config.scm['skinDir'], config.scm['cloakDir'])
+
+schost, scport = config.scm['url']
+scManager = scstorage.scstorage(config.scm['skindir'], config.scm['capedir'], schost, scport)
 
 async def register(message):
     try:
@@ -35,7 +42,7 @@ async def reg(message):
 async def chpass(message):
     try:
         db.connect()
-        r = db.registerd(message.author.id)
+        r = db.registered(message.author.id)
         if r[0] and r[1]:
             r_chpass = db.changePassword(message.author.id, message.content.split(' ')[1])
             if r_chpass[0] and r_chpass[1] is None:
@@ -53,7 +60,7 @@ async def chpass(message):
 async def chnick(message):
     try:
         db.connect()
-        r = db.registerd(message.author.id)
+        r = db.registered(message.author.id)
         if r[0] and r[1]:
             r_chpass = db.changeUsername(message.author.id, message.content.split(' ')[1])
             if r_chpass[0]:
@@ -69,7 +76,7 @@ async def chnick(message):
 async def chskin(message):
     try:
         db.connect()
-        r = db.registerd(message.author.id)
+        r = db.registered(message.author.id)
         if r[0] and r[1]:
             skinUrl = message.attachments[0].url
             r = requests.get(skinUrl, stream=True)
@@ -88,14 +95,15 @@ async def chskin(message):
             await message.channel.send('**Ошибка:** Сначала зарегистрируйся') 
     except Exception as ex:
         print(ex)
-        await message.channel.send(f'**Ошибка:** Неверный синтаксис\nКак надо: {config.cPREFIX}chskin в коментарии к картике со скином')
+        await message.channel.send(f'**Ошибка:** Неверный синтаксис\nКак надо: {config.cPREFIX}chskin в комментарии к '
+                                   f'картинке со скином')
     finally:
         db.close()
 
-async def chcloak(message):
+async def chcape(message):
     try:
         db.connect()
-        r = db.registerd(message.author.id)
+        r = db.registered(message.author.id)
         if r[0] and r[1]:
             cloakUrl = message.attachments[0].url
             r = requests.get(cloakUrl, stream=True)
@@ -114,7 +122,8 @@ async def chcloak(message):
             await message.channel.send('**Ошибка:** Сначала зарегистрируйся') 
     except Exception as ex:
         print(ex)
-        await message.channel.send(f'**Ошибка:** Неверный синтаксис\nКак надо: {config.cPREFIX}chcloak в коментарии к картике с плащом')
+        await message.channel.send(f'**Ошибка:** Неверный синтаксис\nКак надо: {config.cPREFIX}chcloak в комментарии '
+                                   f'к картинке с плащом')
     finally:
         db.close()
     
@@ -130,14 +139,14 @@ async def links(message):
 
 async def help(message):
     embedVar = discord.Embed(title="Справка", description="*Что же делать?*", color=config.embedColor)
-    embedVar.add_field(name="!register", value="Регистрация: !register ник пароль", inline=False)
-    embedVar.add_field(name="!chnick", value="Смена пароля: !chnick новый никнейм", inline=False)
-    embedVar.add_field(name="!chpass", value="Смена пароля: !chpass новый пароль", inline=False)
-    embedVar.add_field(name="!chskin", value="Смена скина: !chskin + файл скина", inline=False)
-    embedVar.add_field(name="!chcloak", value="Смена скина: !chcloak + файл плаща", inline=False)
-    embedVar.add_field(name="!links", value="Ссылки на скачивание ланчера", inline=False)
-    embedVar.add_field(name="!help", value="Эта справка", inline=False)
-    embedVar.add_field(name="Как роботать?", value="Напиши боту в лс", inline=False)
+    embedVar.add_field(name=f"{config.cPREFIX}register", value=f"Регистрация: {config.cPREFIX}register ник пароль", inline=False)
+    embedVar.add_field(name=f"{config.cPREFIX}chnick", value=f"Смена ника: {config.cPREFIX}chnick новый никнейм", inline=False)
+    embedVar.add_field(name=f"{config.cPREFIX}chpass", value=f"Смена пароля: {config.cPREFIX}chpass новый пароль", inline=False)
+    embedVar.add_field(name=f"{config.cPREFIX}chskin", value=f"Смена скина: {config.cPREFIX}chskin + файл скина", inline=False)
+    embedVar.add_field(name=f"{config.cPREFIX}chcape", value=f"Смена плаща: {config.cPREFIX}chcape + файл плаща", inline=False)
+    embedVar.add_field(name=f"{config.cPREFIX}links", value=f"Ссылки на скачивание ланчера", inline=False)
+    embedVar.add_field(name=f"{config.cPREFIX}help", value=f"Эта справка", inline=False)
+    embedVar.add_field(name="Как пользоваться?", value="Напиши боту в лс", inline=False)
     await message.channel.send(embed=embedVar)
     
 
@@ -152,4 +161,9 @@ async def on_message(message):
             await message.channel.send('**Ошибка:** Команда не найдена!')
 
         
-client.run(config.DISCORD_TOKEN)
+if __name__ == '__main__':
+    bot_thread = threading.Thread(target=client.run, agrs=(config.DISCORD_TOKEN,))
+    scs_thread = threading.Thread(target=scManager.server)
+    bot_thread.start()
+    scs_thread.start()
+
