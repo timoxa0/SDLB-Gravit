@@ -1,8 +1,8 @@
 #!/bin/python3
-from PIL import Image
 import threading
-import requests
 import discord
+import signal
+import sys
 
 import config
 import dbmanager
@@ -13,8 +13,10 @@ client = discord.Client()
 db = dbmanager.dbm(config.db['login'], config.db['password'], config.db['host'], config.db['db_name'])
 
 
-schost, scport = config.scm['url']
-scManager = scstorage.scstorage(config.scm['skindir'], config.scm['capedir'], schost, scport)
+schost, scport = config.scm['url'].split(':')
+scManager = scstorage.scstorage(config.scm['skindir'], config.scm['capedir'], schost, int(scport))
+
+
 
 async def register(message):
     try:
@@ -79,18 +81,13 @@ async def chskin(message):
         r = db.registered(message.author.id)
         if r[0] and r[1]:
             skinUrl = message.attachments[0].url
-            r = requests.get(skinUrl, stream=True)
-            r.raw.decode_content = True
-            skin = Image.open(r.raw)
-            w, h = skin.size
-            if (w % 64 == 0 and h % 64 == 0) and (w <= 512 and h <= 512):
-                r_getUser = db.getUsernameByDiscordID(message.author.id)
-                if r_getUser[0]:
-                    username = r_getUser[1]['username']
-                    scManager.setSkin(username, skinUrl)
+            r_getUser = db.getUsernameByDiscordID(message.author.id)
+            if r_getUser[0]:
+                username = r_getUser[1]['username']
+                if scManager.saveskin(username, skinUrl):
                     await message.channel.send('Скин успешно изменён')
-            else:
-                await message.channel.send('**Ошибка:** Неверный файл скина')
+                else:
+                    await message.channel.send('**Ошибка:** Неверный файл скина')
         else:
             await message.channel.send('**Ошибка:** Сначала зарегистрируйся') 
     except Exception as ex:
@@ -105,19 +102,14 @@ async def chcape(message):
         db.connect()
         r = db.registered(message.author.id)
         if r[0] and r[1]:
-            cloakUrl = message.attachments[0].url
-            r = requests.get(cloakUrl, stream=True)
-            r.raw.decode_content = True
-            cloak = Image.open(r.raw)
-            w, h = cloak.size
-            if (w % 64 == 0 and h % 32 == 0) and (w <= 512 and h <= 512):
-                r_getUser = db.getUsernameByDiscordID(message.author.id)
-                if r_getUser[0]:
-                    username = r_getUser[1]['username']
-                    scManager.setCloak(username, cloakUrl)
+            capeUrl = message.attachments[0].url
+            r_getUser = db.getUsernameByDiscordID(message.author.id)
+            if r_getUser[0]:
+                username = r_getUser[1]['username']
+                if scManager.savecape(username, capeUrl):
                     await message.channel.send('Плащ успешно изменён')
-            else:
-                await message.channel.send('**Ошибка:** Неверный файл плаща')
+                else:
+                    await message.channel.send('**Ошибка:** Неверный файл плаща')
         else:
             await message.channel.send('**Ошибка:** Сначала зарегистрируйся') 
     except Exception as ex:
@@ -160,10 +152,14 @@ async def on_message(message):
         except(NameError):
             await message.channel.send('**Ошибка:** Команда не найдена!')
 
-        
+
+def signal_handler(signal, frame):
+    print('\nStopping!')
+    sys.exit(0)
+
 if __name__ == '__main__':
-    bot_thread = threading.Thread(target=client.run, agrs=(config.DISCORD_TOKEN,))
+    signal.signal(signal.SIGINT, signal_handler)
     scs_thread = threading.Thread(target=scManager.server)
-    bot_thread.start()
     scs_thread.start()
+    client.run(config.DISCORD_TOKEN)
 

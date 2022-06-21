@@ -2,8 +2,8 @@ DISCORD_TOKEN = ''  # Токен дс бота
 cPREFIX = '!'  # Префикс команды бота
 
 launcher = dict()
-launcher['MUSTDIE'] = ''  # Ваша ссылка на windows версию лаунчера
-launcher['LINUX/MAC'] = ''  # А здесь на linux/macos версию
+launcher['MUSTDIE'] = 'http://<ВАШ-IP>:<ПОРТ LaunchServer>/'  # Ваша ссылка на windows версию лаунчера
+launcher['LINUX/MAC'] = 'http://<ВАШ-IP>:<ПОРТ LaunchServer>/'  # А здесь на linux/macos версию
 
 db = dict()
 db['host'] = 'localhost'  # Хост mysql/mariadb
@@ -17,7 +17,7 @@ scm = dict()
 scm['enabled'] = True  # Использовать встроенную систему скинов
 scm['skindir'] = './skins'  # Путь к папке со скинами
 scm['capedir'] = './capes'  # Путь к папке с плащами
-scm['url'] = 'localhost:8123'  # ВАШ IP/ДОМЕН
+scm['url'] = '<ВАШ-IP>:<ПОРТ Менеджера скинов>'  # ВАШ IP/ДОМЕН
 scm['ssl'] = False  # Использовать HTTPS
 
 # Плащ и скин по-умолчанию в BASE64 (import base64;print(base64.encodebytes(open('file.png'))))

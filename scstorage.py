@@ -61,6 +61,9 @@ class scstorage:
                 os.remove(f'{self.skindir}/{nickname}.png')
             with open(f'{self.skindir}/{nickname}.png', 'wb') as file:
                 file.write(requests.get(skinUrl).content)
+            return True
+        else:
+            return False
 
     def savecape(self, nickname, capeUrl):
         r = requests.get(capeUrl, stream=True)
@@ -70,6 +73,9 @@ class scstorage:
                 os.remove(f'{self.capedir}/{nickname}.png')
             with open(f'{self.capedir}/{nickname}.png', 'wb') as file:
                 file.write(requests.get(capeUrl).content)
+            return True
+        else:
+            return False
 
     def resolv(self, path):
         r_code = 404
