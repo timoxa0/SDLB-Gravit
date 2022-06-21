@@ -1,7 +1,5 @@
 #!/bin/python3
-from PIL import Image
 import threading
-import requests
 import discord
 import signal
 import sys
