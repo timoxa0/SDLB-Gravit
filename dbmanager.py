@@ -11,6 +11,7 @@ class dbm:
         self.username, self.password, self.host, self.db_name = username, password, host, db_name
 
     def connect(self):
+        self.connection = None
         self.connection = pymysql.connect(
             host=self.host,
             port=3306,
@@ -19,6 +20,7 @@ class dbm:
             database=self.db_name,
             cursorclass=pymysql.cursors.DictCursor
         )
+        return bool(self.connection)
 
     def close(self):
         try:

@@ -39,6 +39,12 @@ class scstorage:
         self.host = host
         self.port = port
 
+        with open(config.scm['defaultSkin'], 'rb') as file:
+            self.defaultSkin = file.read()
+
+        with open(config.scm['defaultCape'], 'rb') as file:
+            self.defaultCape = file.read()
+
         class handler(BaseHTTPRequestHandler):
             def do_GET(handler_self):
                 response_code, content_type, content = scstorage.resolv(self, handler_self.path)
@@ -99,7 +105,7 @@ class scstorage:
                         response = file.read()
                         file.close()
                     except FileNotFoundError:
-                        response = base64.decodebytes(config.scm['defaultSkin'])
+                        response = self.defaultSkin
                 elif r_type == 'cape':
                     r_code = 200
                     content_type = 'image/png'
@@ -108,21 +114,21 @@ class scstorage:
                         response = file.read()
                         file.close()
                     except FileNotFoundError:
-                        response = base64.decodebytes(config.scm['defaultCape'])
+                        response = self.defaultCape
             elif nickname is not None:
                 r_code = 200
                 content_type = 'application/json'
-                url = 'https://' if config.scm['ssl'] else 'http://' + f'{self.host}:{self.port}'
+                url = config.scm['url']
                 try:
                     skin = open(f'{self.skindir}/{nickname}.png', 'rb').read()
                 except FileNotFoundError:
-                    skin = base64.decodebytes(config.scm['defaultSkin'])
+                    skin = self.defaultSkin
                 slim = checkslim(io.BytesIO(skin))
                 skinDigest = base64.encodebytes(hashlib.md5(skin).hexdigest().encode()).decode().replace('\n', '')
                 try:
                     cape = open(f'{self.capedir}/{nickname}.png', 'rb').read()
                 except FileNotFoundError:
-                    cape = base64.decodebytes(config.scm['defaultCape'])
+                    cape = self.defaultCape
                 capeDigest = base64.encodebytes(hashlib.md5(cape).hexdigest().encode()).decode().replace('\n', '')
                 data = {
                     'SKIN': {

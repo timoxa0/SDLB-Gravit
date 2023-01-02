@@ -6,7 +6,7 @@ setup(
     packages=[''],
     url='https://github.com/timoxa0/SDLB-Gravit',
     license='GNU General Public License v3.0',
-    author='timoxa',
+    author='timoxa0',
     author_email='',
     description='Authentication bot for Gravit Launcher'
 )

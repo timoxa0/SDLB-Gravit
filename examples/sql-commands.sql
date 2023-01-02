@@ -1,8 +1,6 @@
-CREATE USER '<ПОЛЬЗОВАТЕЛЬ-ДЛЯ-ГРАВИТА>'@'localhost' IDENTIFIED BY '<ПАРОЛЬ-ДЛЯ-ГРАВИТА>';
-CREATE USER '<ПОЛЬЗОВАТЕЛЬ-ДЛЯ-БОТА>'@'localhost' IDENTIFIED BY '<ПАРОЛЬ-ДЛЯ-БОТА>';
+CREATE USER 'launchserver'@'localhost' IDENTIFIED BY 'password';
 CREATE DATABASE db;
 GRANT ALL PRIVILEGES ON db . * TO 'launchserver'@'localhost';
-GRANT ALL PRIVILEGES ON db . * TO 'authbot'@'localhost';
 FLUSH PRIVILEGES;
 
 USE db;

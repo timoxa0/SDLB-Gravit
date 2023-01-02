@@ -1,7 +1,7 @@
 "std": {
   "textureProvider": {
         "type":"json",
-        "url":"http://<ВАШ-IP>:<ПОРТ>/get?nickname=%username%"
+        "url":"http[s]://<ВАШ-IP>:<ПОРТ>/get?nickname=%username%"
       },
   "core": {
     "type": "mysql",
