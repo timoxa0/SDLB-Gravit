@@ -1,7 +1,6 @@
 # Гайд по установке
 
-**Перед тем, как установить этого бота необходимо установить [Gravit Launcher](https://launcher.gravit.pro/install/#настроика-хостинга "Gravit Launcher Wiki") и настроить его на работу с [MySQL](https://launcher.gravit.pro/auth/#%D0%BC%D0%B5%D1%82%D0%BE%D0%B4-mysql).
-
+- Настройте Gravit на работу с [MySQL](https://launcher.gravit.pro/auth/#%D0%BC%D0%B5%D1%82%D0%BE%D0%B4-mysql).
 - Зайдите в [Discord Developer Portal](https://discord.com/developers/applications)
 - Создайте новое приложение
 - Во вкладке `bot` создайте бота
