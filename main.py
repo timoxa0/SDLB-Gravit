@@ -46,7 +46,7 @@ async def chpass(message):
             r = db.registered(message.author.id)
             if r[0] and r[1]:
                 r_chpass = db.changePassword(message.author.id, message.content.split(' ')[1])
-                if r_chpass[0] and r_chpass[1] is None:
+                if r_chpass[0]:
                     await message.channel.send('Пароль успешно изменён')
                 elif (not r_chpass[0]) and (r_chpass[1] == '1062'):
                     await message.channel.send(f'Пароль уже занят')

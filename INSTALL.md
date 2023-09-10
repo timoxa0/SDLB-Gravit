@@ -5,7 +5,7 @@
 - Создайте новое приложение
 - Во вкладке `bot` создайте бота
 - Нажмите `Copy` в разделе `token`, чтобы скопировать токен
-- Установите python3 `apt install -y python3, python3-pip`
+- Установите python3 `apt install -y python3 python3-pip`
 - Создайте пользователя для бота командой `useradd -m -G www-data -s /bin/bash authbot`
 и перейдите в него `su - authbot`
 - Склонируйте репозиторий с ботом `git clone https://github.com/timoxa0/SDLB-Gravit`
